@@ -3,6 +3,7 @@ import os
 
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
+
 class ResponseFormatter(logging.Formatter):
     def format(self, record):
         # безопасные доп.поля
@@ -12,8 +13,10 @@ class ResponseFormatter(logging.Formatter):
         record.elapsed_ms = getattr(record, "elapsed_ms", "-")
         return super().format(record)
 
+
 def setup_logging():
-    fmt = "%(levelname)s | %(asctime)s | status=%(status)s | %(method)s %(client_url)s | %(elapsed_ms)s ms | %(message)s"
+    fmt = ("%(levelname)s | %(asctime)s | status=%(status)s | %(method)s %(client_url)s | %(elapsed_ms)s ms | %("
+           "message)s")
     datefmt = "%Y-%m-%d %H:%M:%S"
     handler = logging.StreamHandler()
     handler.setFormatter(ResponseFormatter(fmt=fmt, datefmt=datefmt))

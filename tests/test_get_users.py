@@ -2,6 +2,7 @@ import allure
 from client.endpoints import USERS
 from models.user import ListUsersResponse
 
+
 @allure.story("GET /users — список пользователей")
 def test_get_users_returns_valid_schema(api):
     params = {"page": 2}

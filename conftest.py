@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from selene import browser
 
 from client.api_client import ApiClient
-from utils.logging_config import setup_logging
+from utils.config import setup_logging
 from models.user import LoginRequest
 from client.endpoints import LOGIN
 
@@ -23,7 +23,6 @@ def configure_base_url():
 
 @pytest.fixture(scope="session")
 def api() -> ApiClient:
-
     timeout = int(os.getenv("API_TIMEOUT", "15"))
 
     session = requests.Session()
@@ -35,7 +34,6 @@ def api() -> ApiClient:
 
 @pytest.fixture(scope="session")
 def auth_token(api: ApiClient) -> str:
-
     email = os.getenv("AUTH_EMAIL", "eve.holt@reqres.in")
     password = os.getenv("AUTH_PASSWORD", "pistol")
     payload = LoginRequest(email=email, password=password).model_dump()
