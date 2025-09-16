@@ -6,10 +6,12 @@ from urllib.parse import urljoin
 from typing import Any, Optional
 
 from selene import browser
-from utils.allure_helpers import attach_request, attach_response
+from utils.helpers_allure import attach_request, attach_response
+
 
 class ApiClient:
-    def __init__(self, session: Optional[requests.Session] = None, timeout: int = 15, logger: Optional[logging.Logger] = None):
+    def __init__(self, session: Optional[requests.Session] = None, timeout: int = 15,
+                 logger: Optional[logging.Logger] = None):
         self.session = session or requests.Session()
         self.timeout = timeout
         self.logger = logger or logging.getLogger(__name__)
@@ -19,7 +21,7 @@ class ApiClient:
         return browser.config.base_url
 
     def _full_url(self, endpoint: str) -> str:
-        return urljoin(self.base_url.rstrip('/')+'/', endpoint.lstrip('/'))
+        return urljoin(self.base_url.rstrip('/') + '/', endpoint.lstrip('/'))
 
     def request(self, method: str, endpoint: str, *, params: dict | None = None, json: Any = None,
                 headers: dict | None = None, expected_status: int | None = None) -> requests.Response:
@@ -28,7 +30,8 @@ class ApiClient:
         attach_request(method, url, headers, params, json)
 
         start = time.perf_counter()
-        resp = self.session.request(method=method, url=url, params=params, json=json, headers=headers, timeout=self.timeout)
+        resp = self.session.request(method=method, url=url, params=params, json=json, headers=headers,
+                                    timeout=self.timeout)
         elapsed_ms = int((time.perf_counter() - start) * 1000)
 
         try:
@@ -36,7 +39,6 @@ class ApiClient:
         except Exception:
             body = resp.text
         attach_response(resp.status_code, dict(resp.headers), body, elapsed_ms)
-
 
         self.logger.info("API call finished",
                          extra=dict(status=resp.status_code, method=method, client_url=url, elapsed_ms=elapsed_ms))
