@@ -6,7 +6,6 @@ LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 
 class ResponseFormatter(logging.Formatter):
     def format(self, record):
-        # безопасные доп.поля
         record.status = getattr(record, "status", "-")
         record.method = getattr(record, "method", "-")
         record.client_url = getattr(record, "client_url", "-")
@@ -15,8 +14,8 @@ class ResponseFormatter(logging.Formatter):
 
 
 def setup_logging():
-    fmt = ("%(levelname)s | %(asctime)s | status=%(status)s | %(method)s %(client_url)s | %(elapsed_ms)s ms | %("
-           "message)s")
+    fmt = ("%(levelname)s | %(asctime)s | status=%(status)s | %(method)s %(client_url)s | "
+           "elapsed=%(elapsed_ms)s ms | %(message)s")
     datefmt = "%Y-%m-%d %H:%M:%S"
     handler = logging.StreamHandler()
     handler.setFormatter(ResponseFormatter(fmt=fmt, datefmt=datefmt))

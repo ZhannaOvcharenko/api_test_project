@@ -1,9 +1,10 @@
 import allure
-from client.endpoints import USER_BY_ID
+from client.api_client import ApiClient
+from client.endpoints import endpoints
 
 
-@allure.story("DELETE /users/{id} — удаление пользователя")
-def test_delete_user_returns_204(api):
-    resp = api.delete(USER_BY_ID.format(id=2), expected_status=204)
-    assert resp.status_code == 204
+@allure.feature("Users")
+@allure.story("Delete User")
+def test_delete_user(api: ApiClient):
+    resp = api.delete(endpoints.USER_BY_ID.format(id=2), expected_status=204)
     assert resp.text == ""

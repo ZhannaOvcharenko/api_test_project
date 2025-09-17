@@ -1,4 +1,3 @@
-from __future__ import annotations
 import time
 import requests
 import logging
@@ -14,7 +13,7 @@ class ApiClient:
                  logger: Optional[logging.Logger] = None):
         self.session = session or requests.Session()
         self.timeout = timeout
-        self.logger = logger or logging.getLogger(__name__)
+        self.logger = logger or logging.getLogger("api")
 
     @property
     def base_url(self) -> str:
@@ -36,7 +35,7 @@ class ApiClient:
 
         try:
             body = resp.json()
-        except Exception:
+        except ValueError:
             body = resp.text
         attach_response(resp.status_code, dict(resp.headers), body, elapsed_ms)
 
@@ -44,7 +43,10 @@ class ApiClient:
                          extra=dict(status=resp.status_code, method=method, client_url=url, elapsed_ms=elapsed_ms))
 
         if expected_status is not None:
-            assert resp.status_code == expected_status, f"Expected {expected_status}, got {resp.status_code}. Body: {resp.text}"
+            assert resp.status_code == expected_status, (
+                f"Expected {expected_status}, got {resp.status_code}. "
+                f"Body: {resp.text}"
+            )
 
         return resp
 

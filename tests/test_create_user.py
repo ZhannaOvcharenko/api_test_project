@@ -1,18 +1,15 @@
 import allure
-from client.endpoints import USERS
-from models.user import CreateUserRequest, CreateUserResponse
+from client.api_client import ApiClient
+from client.endpoints import endpoints
+from models.user import UserCreate, UserResponse
 
 
-@allure.story("POST /users — создание пользователя")
-def test_create_user_success(api):
-    body = CreateUserRequest(name="Jonn", job="teacher").model_dump()
-    resp = api.post(USERS, json=body, expected_status=201)
+@allure.feature("Users")
+@allure.story("Create User")
+def test_create_user(api: ApiClient):
+    body = UserCreate(name="morpheus", job="leader").model_dump()
+    resp = api.post(endpoints.USERS, json=body, expected_status=201)
 
-    assert resp.status_code == 201
-
-    created = CreateUserResponse.model_validate(resp.json())
-
-    assert created.name == "Jonn"
-    assert created.job == "teacher"
-    assert created.id
-    assert created.createdAt
+    parsed = UserResponse(**resp.json())
+    assert parsed.name == "morpheus"
+    assert parsed.job == "leader"

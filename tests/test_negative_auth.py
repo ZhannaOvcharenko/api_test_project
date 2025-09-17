@@ -1,14 +1,21 @@
 import allure
-from client.endpoints import LOGIN
-from models.user import LoginRequest, ErrorResponse
+import pytest
+from client.api_client import ApiClient
+from client.endpoints import endpoints
+from models.user import ErrorResponse
 
 
-@allure.story("POST /login — негативный сценарий (нет пароля)")
-def test_login_without_password_returns_400(api):
-    payload = {"email": "Kristen@styart"}  # отсутствие поля password
-    resp = api.post(LOGIN, json=payload, expected_status=400)
-
-    assert resp.status_code == 400
-
-    err = ErrorResponse.model_validate(resp.json())
-    assert err.error.lower() == "missing password"
+@allure.feature("Auth")
+@allure.story("Login negative cases")
+@pytest.mark.parametrize(
+    "body, expected_error",
+    [
+        ({"email": "peter@klaven"}, "Missing password"),
+        ({"password": "cityslicka"}, "Missing email or username"),
+        ({}, "Missing email or username"),
+    ],
+)
+def test_login_negative(api: ApiClient, body, expected_error):
+    resp = api.post(endpoints.LOGIN, json=body, expected_status=400)
+    parsed = ErrorResponse(**resp.json())
+    assert parsed.error == expected_error

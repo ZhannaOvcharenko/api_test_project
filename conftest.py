@@ -8,7 +8,7 @@ from selene import browser
 from client.api_client import ApiClient
 from utils.config import setup_logging
 from models.user import LoginRequest
-from client.endpoints import LOGIN
+from client.endpoints import endpoints
 
 load_dotenv()
 
@@ -38,7 +38,7 @@ def auth_token(api: ApiClient) -> str:
     password = os.getenv("AUTH_PASSWORD", "pistol")
     payload = LoginRequest(email=email, password=password).model_dump()
 
-    resp = api.post(LOGIN, json=payload, expected_status=200)
+    resp = api.post(endpoints.LOGIN, json=payload, expected_status=200)
     token = resp.json().get("token", "")
 
     os.makedirs("reports", exist_ok=True)
